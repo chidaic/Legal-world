@@ -10,7 +10,7 @@ from typing import Any
 
 from camel.toolkits import FunctionTool
 
-from batch_tools.common import DEFAULT_DATASET_PATH, map_eval_stage_code, stage_label, write_json
+from src.utils.file_io import DEFAULT_DATASET_PATH, map_eval_stage_code, stage_label, write_json
 
 
 BENCHMARK_EVAL_TOOL_NAME = "run_case_benchmark_evaluation"

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import os
 import sys
 import tempfile
@@ -15,10 +14,9 @@ except ImportError:  # pragma: no cover - optional dependency
     load_dotenv = None
 
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
+BACKEND_DIR = Path(__file__).resolve().parents[2]
 PROJECT_ROOT = BACKEND_DIR.parent
 DEFAULT_DATASET_PATH = PROJECT_ROOT / "data" / "llm_single_natural_person_cases_question.json"
-DEFAULT_BATCH_ROOT = BACKEND_DIR / "batch_runs"
 
 STAGE_DISPLAY_NAMES = {
     "INIT": "初始化",
@@ -59,41 +57,11 @@ def configure_utf8_stdio() -> None:
                 pass
 
 
-class SuppressCamelUnknownModelWarning(logging.Filter):
-    def filter(self, record: logging.LogRecord) -> bool:
-        message = record.getMessage()
-        if (
-            "Unknown model '" in message
-            and "context window size not defined" in message
-            and "Defaulting to 999_999_999" in message
-        ):
-            return False
-        return True
-
-
-def install_batch_logging_filters() -> None:
-    root_logger = logging.getLogger()
-    has_filter = any(
-        isinstance(existing_filter, SuppressCamelUnknownModelWarning)
-        for existing_filter in getattr(root_logger, "filters", [])
-    )
-    if not has_filter:
-        root_logger.addFilter(SuppressCamelUnknownModelWarning())
-
-    for handler in root_logger.handlers:
-        if any(
-            isinstance(existing_filter, SuppressCamelUnknownModelWarning)
-            for existing_filter in getattr(handler, "filters", [])
-        ):
-            continue
-        handler.addFilter(SuppressCamelUnknownModelWarning())
-
-
 def utc_timestamp() -> str:
     return datetime.now().isoformat()
 
 
-def batch_timestamp() -> str:
+def timestamp_tag() -> str:
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
@@ -128,24 +96,6 @@ def write_json(path: str | Path, data: Any) -> None:
         if temp_path is not None:
             temp_path.unlink(missing_ok=True)
         raise
-
-
-def select_case_ids(data_loader: Any, start_case_id: int, case_count: int) -> list[int]:
-    if case_count <= 0:
-        raise ValueError("case_count 必须大于 0")
-
-    available_case_ids = sorted(
-        int(case.get("original_id"))
-        for case in getattr(data_loader, "cases", [])
-        if isinstance(case, dict) and case.get("original_id") is not None
-    )
-    selected = [case_id for case_id in available_case_ids if case_id >= start_case_id][:case_count]
-    if len(selected) < case_count:
-        raise ValueError(
-            f"从 original_id={start_case_id} 开始只能找到 {len(selected)} 个案件，"
-            f"不足请求的 {case_count} 个。"
-        )
-    return selected
 
 
 def infer_draft_stage_code(pipeline_result: dict[str, Any]) -> str:

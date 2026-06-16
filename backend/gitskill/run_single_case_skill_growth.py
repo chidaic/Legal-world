@@ -10,8 +10,8 @@ PROJECT_ROOT = BACKEND_DIR.parent
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
-from batch_tools.common import batch_timestamp, load_project_env
 from gitskill.pipeline import SingleCaseSkillGrowthConfig, run_single_case_skill_growth
+from src.utils.file_io import load_project_env, timestamp_tag
 
 
 load_project_env()
@@ -37,11 +37,11 @@ def _default_main_skill_root() -> str:
 
 
 def _default_case_dir() -> str:
-    return os.environ.get("SIMLAW_SKILL_GROWTH_CASE_DIR", "backend/batch_runs/<case_id>").strip()
+    return os.environ.get("SIMLAW_SKILL_GROWTH_CASE_DIR", "backend/case_runs/<case_id>").strip()
 
 
 DEFAULT_SKILL_OWNER_ID = "demo_lawyer"
-DEFAULT_RUN_TAG = batch_timestamp()
+DEFAULT_RUN_TAG = timestamp_tag()
 
 
 SINGLE_CASE_SKILL_GROWTH_CONFIG = {

@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 from camel.toolkits import FunctionTool
 
-from batch_tools.common import safe_read_json
+from src.utils.file_io import safe_read_json
 
 
 _READABLE_SUFFIXES = {".json", ".md", ".txt"}

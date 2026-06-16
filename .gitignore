@@ -8,8 +8,9 @@ frontend/
 frontend-v2/
 node_modules/
 
-# Build outputs and generated batch results
+# Build outputs and generated run results
 backend/batch_runs/
+backend/case_runs/
 backend/sandbox_data/
 backend/single_case_debug_runs/
 backend/debug_runs/
@@ -54,8 +55,6 @@ dist/
 .env.local
 .env.*.local
 .claude/settings.local.json
-backend/batch_tools/deepseek_lawyer_private_config.json
-
 # IDE and OS files
 .vscode/
 .idea/
@@ -81,5 +80,4 @@ temp_*.py
 J1Bench/
 video-remotion/
 SimLegal_paper/
-backend/batch_runs
 backend_image_v3_amd64.tar.gz

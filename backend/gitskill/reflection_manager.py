@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 from typing import Any
 
-from batch_tools.common import write_json
+from src.utils.file_io import write_json
 
 
 _INVALID_PATH_CHARS_RE = re.compile(r'[<>:"/\\|?*\x00-\x1F]')

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from batch_tools.common import safe_read_json, utc_timestamp, write_json
 from src.agents.lawyer_agent import LawyerAgent
+from src.utils.file_io import safe_read_json, utc_timestamp, write_json
 
 from .prompts import (
     build_stage_one_instruction,
@@ -34,21 +34,6 @@ class SingleCaseSkillGrowthConfig:
 
 
 @dataclass
-class BatchSkillGrowthConfig:
-    skill_owner_id: str
-    main_skill_root: str
-    private_skill_root: str
-    reflection_root: str
-    batch_root: Optional[str] = None
-    case_dirs: Optional[list[str]] = None
-    manifest_path: Optional[str] = None
-    model_name: Optional[str] = None
-    step_timeout_seconds: int = 420
-    delete_final_reflection_on_success: bool = False
-    require_evaluation_summary: bool = True
-
-
-@dataclass
 class SingleCaseSkillGrowthContext:
     case_dir: Path
     case_id: str
@@ -69,12 +54,6 @@ def _ensure_config(config: SingleCaseSkillGrowthConfig | dict[str, Any]) -> Sing
     if isinstance(config, SingleCaseSkillGrowthConfig):
         return config
     return SingleCaseSkillGrowthConfig(**config)
-
-
-def _ensure_batch_config(config: BatchSkillGrowthConfig | dict[str, Any]) -> BatchSkillGrowthConfig:
-    if isinstance(config, BatchSkillGrowthConfig):
-        return config
-    return BatchSkillGrowthConfig(**config)
 
 
 def _require_json_dict(path: Path, label: str) -> dict[str, Any]:
@@ -456,107 +435,3 @@ def run_single_case_skill_growth(
                 agent.deactivate()
             except Exception:
                 pass
-
-
-def _discover_case_dirs(cfg: BatchSkillGrowthConfig) -> list[Path]:
-    explicit_case_dirs = [Path(item).resolve() for item in list(cfg.case_dirs or []) if str(item).strip()]
-    if explicit_case_dirs:
-        return explicit_case_dirs
-
-    if not cfg.batch_root:
-        raise ValueError("Either case_dirs or batch_root must be provided for batch skill growth.")
-
-    batch_root = Path(cfg.batch_root).resolve()
-    if not batch_root.exists():
-        raise FileNotFoundError(f"Batch root does not exist: {batch_root}")
-
-    case_dirs = [
-        path.resolve()
-        for path in sorted(batch_root.iterdir())
-        if path.is_dir() and path.name.startswith("case_")
-    ]
-    if not case_dirs:
-        raise ValueError(f"No case directories were found under batch_root: {batch_root}")
-    return case_dirs
-
-
-def run_batch_skill_growth(
-    config: BatchSkillGrowthConfig | dict[str, Any],
-    agent_factory: Optional[Callable[[SingleCaseSkillGrowthContext, SingleCaseSkillGrowthConfig], Any]] = None,
-) -> dict[str, Any]:
-    cfg = _ensure_batch_config(config)
-    case_dirs = _discover_case_dirs(cfg)
-    reflection_root = Path(cfg.reflection_root).resolve()
-    reflection_root.mkdir(parents=True, exist_ok=True)
-
-    manifest_path = (
-        Path(cfg.manifest_path).resolve()
-        if cfg.manifest_path
-        else reflection_root / "skill_growth_manifest.json"
-    )
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-
-    cases: list[dict[str, Any]] = []
-    summary = {
-        "completed": 0,
-        "failed": 0,
-        "skipped_missing_evaluation": 0,
-        "total": len(case_dirs),
-    }
-
-    for case_dir in case_dirs:
-        eval_summary_path = case_dir / "eval_result" / "summary.json"
-        pipeline_result = safe_read_json(case_dir / "pipeline_result.json", default={})
-        case_id = str(pipeline_result.get("case_id") or case_dir.name.removeprefix("case_") or case_dir.name)
-        case_cause = str(pipeline_result.get("case_cause") or "unknown_case_cause")
-
-        if cfg.require_evaluation_summary and not eval_summary_path.exists():
-            summary["skipped_missing_evaluation"] += 1
-            cases.append(
-                {
-                    "status": "skipped_missing_evaluation",
-                    "case_id": case_id,
-                    "case_cause": case_cause,
-                    "case_dir": str(case_dir),
-                    "error": {
-                        "type": "MissingEvaluationSummary",
-                        "message": f"Missing evaluation summary: {eval_summary_path}",
-                    },
-                },
-            )
-            continue
-
-        single_config = SingleCaseSkillGrowthConfig(
-            case_dir=str(case_dir),
-            skill_owner_id=cfg.skill_owner_id,
-            main_skill_root=cfg.main_skill_root,
-            private_skill_root=cfg.private_skill_root,
-            reflection_root=str(reflection_root),
-            model_name=cfg.model_name,
-            step_timeout_seconds=cfg.step_timeout_seconds,
-            delete_final_reflection_on_success=cfg.delete_final_reflection_on_success,
-        )
-        result = run_single_case_skill_growth(single_config, agent_factory=agent_factory)
-        case_record = _compact_growth_result(result)
-        eval_summary = safe_read_json(eval_summary_path, default={})
-        if isinstance(eval_summary, dict) and "overall_score" in eval_summary:
-            case_record["evaluation_overall_score"] = eval_summary.get("overall_score")
-        cases.append(case_record)
-        if result.get("status") == "completed":
-            summary["completed"] += 1
-        else:
-            summary["failed"] += 1
-
-    manifest = {
-        "generated_at": utc_timestamp(),
-        "status": "completed",
-        "skill_owner_id": cfg.skill_owner_id,
-        "batch_root": str(Path(cfg.batch_root).resolve()) if cfg.batch_root else None,
-        "reflection_root": str(reflection_root),
-        "manifest_path": str(manifest_path),
-        "summary": summary,
-        "cases": cases,
-        "config": asdict(cfg),
-    }
-    write_json(manifest_path, manifest)
-    return manifest

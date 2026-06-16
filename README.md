@@ -2,6 +2,8 @@
 
 This repository contains the backend core for **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
 
+Project page: [https://chidaic.github.io/Legal-world/](https://chidaic.github.io/Legal-world/)
+
 LEGALWORLD models civil litigation as a connected life-cycle process: consultation, document drafting, first-instance trial, appeal, and second-instance proceedings. The backend provides the agent runtime, scenario orchestration, legal Tool/Skill interfaces, WebSocket protocol, API routes, and extension points needed to run or extend the research system.
 
 The public repository is intentionally backend-only. It does **not** include frontend source code, runtime result data, raw evaluation outputs, paper drafts, private deployment files, or model/API credentials. A hosted demo page can be linked separately from the project page.
@@ -21,7 +23,7 @@ The public repository is intentionally backend-only. It does **not** include fro
 ## What Is Not Included
 
 - No frontend application source.
-- No generated case trajectories, logs, batch runs, or benchmark results.
+- No generated case trajectories, logs, run outputs, batch scripts, or benchmark results.
 - No raw legal judgment corpus or private evaluation materials.
 - No law-retrieval vector index files; these are large data assets released separately.
 - No internal test files or private development checks.
@@ -163,13 +165,13 @@ SIMLAW_MAIN_SKILL_ROOT=/path/to/your/skillhub/public
 Reflective Skill growth utilities are included under `backend/gitskill/`. They operate on generated case-run outputs, which are not part of this public repository. To run the single-case reflection example, first point it at your own generated case directory:
 
 ```bash
-SIMLAW_SKILL_GROWTH_CASE_DIR=backend/batch_runs/<your_case_run> python backend/gitskill/run_single_case_skill_growth.py
+SIMLAW_SKILL_GROWTH_CASE_DIR=backend/case_runs/<your_case_run> python backend/gitskill/run_single_case_skill_growth.py
 ```
 
 On Windows PowerShell:
 
 ```powershell
-$env:SIMLAW_SKILL_GROWTH_CASE_DIR="backend/batch_runs/<your_case_run>"
+$env:SIMLAW_SKILL_GROWTH_CASE_DIR="backend/case_runs/<your_case_run>"
 python backend/gitskill/run_single_case_skill_growth.py
 ```
 
@@ -220,7 +222,7 @@ https://chidaic.github.io/Legal-world/
 Before publishing or making a release:
 
 - Confirm `.env` is not tracked.
-- Confirm no generated data exists under `backend/sandbox_data/`, `backend/batch_runs/`, or debug output folders.
+- Confirm no generated data exists under `backend/sandbox_data/`, `backend/case_runs/`, `backend/batch_runs/`, or debug output folders.
 - Confirm law-retrieval index files are not committed; publish them through the project Data page instead.
 - Confirm no frontend source directory is present.
 - Confirm public Skills under `backend/legal-skillhub/public/` contain only reusable procedural guidance.
