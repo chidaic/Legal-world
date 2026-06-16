@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -42,6 +43,10 @@ ALLOWED_STAGE_ROLE_NAMES: tuple[str, ...] = (
     "appellee_lawyer",
 )
 MANIFEST_PATH = Path(__file__).with_name("stage_tool_manifest.yaml")
+OPTIONAL_TOOL_FLAGS: dict[str, str] = {
+    "search_laws": "SIMLAW_ENABLE_LAW_RETRIEVAL",
+}
+TRUE_ENV_VALUES = {"1", "true", "yes", "on", "enabled"}
 
 
 def _normalize_string_list(values: Iterable[Any], *, label: str) -> list[str]:
@@ -69,6 +74,22 @@ def _merge_string_lists(*groups: Iterable[str]) -> list[str]:
             seen.add(value)
             merged.append(value)
     return merged
+
+
+def _env_flag_enabled(name: str) -> bool:
+    return str(os.environ.get(name, "") or "").strip().lower() in TRUE_ENV_VALUES
+
+
+def is_optional_tool_enabled(tool_id: str) -> bool:
+    """Return whether an optional heavy tool should be injected at runtime."""
+    flag_name = OPTIONAL_TOOL_FLAGS.get(str(tool_id or "").strip())
+    if not flag_name:
+        return True
+    return _env_flag_enabled(flag_name)
+
+
+def _filter_enabled_tool_ids(tool_ids: Iterable[str]) -> list[str]:
+    return [tool_id for tool_id in list(tool_ids or []) if is_optional_tool_enabled(tool_id)]
 
 
 def validate_stage_tool_manifest(payload: Any) -> dict[str, Any]:
@@ -282,7 +303,7 @@ def get_agent_type_default_tool_ids(agent_type: str) -> list[str]:
     normalized_agent_type = str(agent_type or "").strip().lower()
     manifest = load_stage_tool_manifest()
     try:
-        return list(manifest["agent_type_defaults"][normalized_agent_type])
+        return _filter_enabled_tool_ids(manifest["agent_type_defaults"][normalized_agent_type])
     except KeyError as exc:
         raise ValueError(f"Unknown agent type: {agent_type}") from exc
 
@@ -310,7 +331,7 @@ def build_agent_default_tools(
 def get_stage_shared_tool_ids(stage_code: str) -> list[str]:
     """Return stage-level shared tool ids."""
     _, stage_config = _get_stage_config(stage_code)
-    return list(stage_config["shared_tools"])
+    return _filter_enabled_tool_ids(stage_config["shared_tools"])
 
 
 def get_stage_role_tool_ids(stage_code: str, role_name: str) -> list[str]:
@@ -318,7 +339,7 @@ def get_stage_role_tool_ids(stage_code: str, role_name: str) -> list[str]:
     normalized_role_name = validate_stage_role_name(stage_code, role_name)
     _, stage_config = _get_stage_config(stage_code)
     role_tools = stage_config["role_tools"]
-    return list(role_tools.get(normalized_role_name, []))
+    return _filter_enabled_tool_ids(role_tools.get(normalized_role_name, []))
 
 
 def resolve_configured_tool_names(stage_code: str, role_name: str, agent_type: str) -> list[str]:
@@ -494,6 +515,7 @@ __all__ = [
     "get_stage_role_tool_ids",
     "get_stage_shared_tool_ids",
     "infer_stage_role_name",
+    "is_optional_tool_enabled",
     "load_stage_tool_manifest",
     "resolve_agent_type",
     "resolve_configured_tool_ids_for_agent",

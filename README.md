@@ -22,6 +22,7 @@ The public repository is intentionally backend-only. It does **not** include fro
 - No frontend application source.
 - No generated case trajectories, logs, batch runs, or benchmark results.
 - No raw legal judgment corpus or private evaluation materials.
+- No law-retrieval vector index files; these are large data assets released separately.
 - No internal test files or private development checks.
 - No `.env`, API keys, database passwords, model credentials, or deployment secrets.
 
@@ -75,6 +76,8 @@ Edit `.env` and set at least:
 OPENAI_API_KEY=
 OPENAI_API_BASE_URL=
 OPENAI_MODEL_NAME=
+SIMLAW_ENABLE_LAW_RETRIEVAL=false
+LAW_RETRIEVAL_INDEX_DIR=
 DATABASE_URL=postgresql+psycopg://simlaw:change-this-postgres-password@localhost:5432/simlaw
 JWT_SECRET=change-this-jwt-secret
 ```
@@ -169,12 +172,36 @@ $env:SIMLAW_SKILL_GROWTH_CASE_DIR="backend/batch_runs/<your_case_run>"
 python backend/gitskill/run_single_case_skill_growth.py
 ```
 
+## Optional Law Retrieval Data
+
+Semantic law-article retrieval is disabled by default in this public repository. The retrieval tool requires a prebuilt local vector index, including:
+
+```text
+law_vector_index_manifest.json
+law_embeddings.float16.npy
+law_metadata.jsonl
+```
+
+These files are intentionally not stored in GitHub because they are large data assets. After the project Data page is public, download the law-retrieval index package from the Data page or the linked Hugging Face dataset, unpack it locally, and then enable retrieval:
+
+```env
+SIMLAW_ENABLE_LAW_RETRIEVAL=true
+LAW_RETRIEVAL_INDEX_DIR=/path/to/cn_law
+LAW_EMBEDDING_API_KEY=
+LAW_EMBEDDING_API_BASE_URL=
+LAW_EMBEDDING_MODEL=
+LAW_EMBEDDING_DIMENSIONS=1024
+```
+
+`LAW_RETRIEVAL_INDEX_DIR` should point to the directory that contains the three files listed above. The query embedding model should match the model used to build the downloaded index; check the downloaded `law_vector_index_manifest.json` for the model hint.
+
 ## Repository Hygiene
 
 Before publishing or making a release:
 
 - Confirm `.env` is not tracked.
 - Confirm no generated data exists under `backend/sandbox_data/`, `backend/batch_runs/`, or debug output folders.
+- Confirm law-retrieval index files are not committed; publish them through the project Data page instead.
 - Confirm no frontend source directory is present.
 - Confirm public Skills under `backend/legal-skillhub/public/` contain only reusable procedural guidance.
 - Confirm no private IPs, API keys, access tokens, or local absolute paths are present.

@@ -2,8 +2,16 @@
 
 from __future__ import annotations
 
+import os
 from copy import deepcopy
 from typing import Any
+
+
+TRUE_ENV_VALUES = {"1", "true", "yes", "on", "enabled"}
+
+
+def _law_retrieval_enabled() -> bool:
+    return str(os.environ.get("SIMLAW_ENABLE_LAW_RETRIEVAL", "") or "").strip().lower() in TRUE_ENV_VALUES
 
 
 CORE_TOOLS: tuple[dict[str, str], ...] = (
@@ -11,8 +19,8 @@ CORE_TOOLS: tuple[dict[str, str], ...] = (
         "id": "search_laws",
         "display_name": "法条检索",
         "category": "运行工具",
-        "description": "检索与当前法律问题相关的本地法条。",
-        "runtime_status": "core",
+        "description": "检索与当前法律问题相关的本地法条；公开版默认关闭，需下载向量索引后启用。",
+        "runtime_status": "disabled_by_default",
     },
     {
         "id": "save_client_memory",
@@ -179,9 +187,13 @@ RUNTIME_SKILLS: tuple[dict[str, str], ...] = (
 
 def build_runtime_tech_catalog() -> dict[str, Any]:
     """Return the frontend-facing runtime Tool/Skill catalog."""
+    core_tools = deepcopy(list(CORE_TOOLS))
+    for tool in core_tools:
+        if tool.get("id") == "search_laws" and _law_retrieval_enabled():
+            tool["runtime_status"] = "core"
     return {
         "tools": {
-            "core": deepcopy(list(CORE_TOOLS)),
+            "core": core_tools,
             "extension": deepcopy(list(EXTENSION_TOOLS)),
         },
         "skills": {

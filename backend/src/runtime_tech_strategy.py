@@ -5,6 +5,7 @@ from __future__ import annotations
 import inspect
 import json
 import logging
+import os
 from dataclasses import dataclass
 from typing import Any, Callable
 
@@ -15,6 +16,11 @@ RUNTIME_TECH_USED_PHASE = "runtime_tech_used"
 DOCUMENT_STAGES = {"CD", "DD", "AD", "AR"}
 CONSULTATION_STAGES = {"PLC", "DLC", "LC"}
 TRIAL_STAGES = {"CI", "CIA"}
+TRUE_ENV_VALUES = {"1", "true", "yes", "on", "enabled"}
+
+
+def _law_retrieval_enabled() -> bool:
+    return str(os.environ.get("SIMLAW_ENABLE_LAW_RETRIEVAL", "") or "").strip().lower() in TRUE_ENV_VALUES
 
 
 @dataclass(frozen=True)
@@ -71,6 +77,11 @@ def _default_tool_executor(tool_name: str, **kwargs: Any) -> Any:
             include_full_texts=False,
         )
     if tool_name == "search_laws":
+        if not _law_retrieval_enabled():
+            raise RuntimeError(
+                "Law retrieval is disabled. Set SIMLAW_ENABLE_LAW_RETRIEVAL=true "
+                "after installing the law vector index."
+            )
         from .tools.common.law_retrieval_tool import create_law_search_function
 
         return create_law_search_function(
@@ -210,14 +221,15 @@ class RuntimeTechStrategy:
             case_cause=case_cause,
             case_background=case_background,
         )
-        await self.call_tool_or_demo(
-            case_id=case_id,
-            stage_code=normalized_stage,
-            tool_name="search_laws",
-            message="法条检索完成",
-            query=query,
-            top_k=3,
-        )
+        if _law_retrieval_enabled():
+            await self.call_tool_or_demo(
+                case_id=case_id,
+                stage_code=normalized_stage,
+                tool_name="search_laws",
+                message="法条检索完成",
+                query=query,
+                top_k=3,
+            )
         if normalized_stage in CONSULTATION_STAGES | DOCUMENT_STAGES | TRIAL_STAGES:
             await self.call_tool_or_demo(
                 case_id=case_id,

@@ -17,6 +17,14 @@ backend/shared/
 backend/gitskill_data/
 skill_test/workspace/
 
+# Large optional law-retrieval indexes are released outside GitHub.
+law_vector_index_manifest.json
+law_embeddings.float16.npy
+law_metadata.jsonl
+backend/**/law_vector_index_manifest.json
+backend/**/law_embeddings.float16.npy
+backend/**/law_metadata.jsonl
+
 # Experiment run outputs
 backend/experiment/**/runs/
 backend/experiment/**/runs*/

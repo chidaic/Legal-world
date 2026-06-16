@@ -552,7 +552,11 @@ def create_law_retrieval_tool(
 ) -> FunctionTool:
     """Create the FunctionTool wrapper for semantic law retrieval."""
     if storage_path is None:
-        default_path = Path(__file__).parent.parent.parent.parent / "shared" / "cn_law"
+        default_path = (
+            os.environ.get("LAW_RETRIEVAL_INDEX_DIR")
+            or os.environ.get("SIMLAW_LAW_RETRIEVAL_INDEX_DIR")
+            or str(Path(__file__).parent.parent.parent.parent / "shared" / "cn_law")
+        )
         storage_path = str(default_path)
 
     search_func = create_law_search_function(
