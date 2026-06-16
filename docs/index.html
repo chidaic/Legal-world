@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents">
+  <meta name="description" content="LEGALWORLD is a life-cycle interactive environment and LongJud-Bench benchmark for evaluating legal agents across connected civil litigation stages.">
+  <meta name="keywords" content="LEGALWORLD, LongJud-Bench, legal agents, legal AI, civil litigation, agent benchmark, life-cycle simulation">
+  <meta name="author" content="Songhan Zuo, Shengbin Yue, Tao Chiang, Guanying Li, Yun Song, Xuanjing Huang, Zhongyu Wei">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="LEGALWORLD Project">
+  <meta property="og:title" content="LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents">
+  <meta property="og:description" content="A connected civil-litigation environment and benchmark for studying legal agents from consultation to second-instance judgment.">
+  <meta property="og:image" content="static/images/legalworld-overview.png">
+  <meta property="og:image:alt" content="Overview of the LEGALWORLD life-cycle legal-agent environment">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents">
+  <meta name="twitter:description" content="A connected civil-litigation environment and benchmark for studying legal agents from consultation to second-instance judgment.">
+  <meta name="twitter:image" content="static/images/legalworld-overview.png">
+
+  <meta name="citation_title" content="LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents">
+  <meta name="citation_author" content="Zuo, Songhan">
+  <meta name="citation_author" content="Yue, Shengbin">
+  <meta name="citation_author" content="Chiang, Tao">
+  <meta name="citation_author" content="Li, Guanying">
+  <meta name="citation_author" content="Song, Yun">
+  <meta name="citation_author" content="Huang, Xuanjing">
+  <meta name="citation_author" content="Wei, Zhongyu">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_pdf_url" content="static/paper/arxiv_version_Legal_world.pdf">
+
+  <title>LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents</title>
+  <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/legalworld.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents",
+    "description": "LEGALWORLD models Chinese civil litigation as a connected life-cycle environment for legal-agent evaluation.",
+    "author": [
+      {"@type": "Person", "name": "Songhan Zuo"},
+      {"@type": "Person", "name": "Shengbin Yue"},
+      {"@type": "Person", "name": "Tao Chiang"},
+      {"@type": "Person", "name": "Guanying Li"},
+      {"@type": "Person", "name": "Yun Song"},
+      {"@type": "Person", "name": "Xuanjing Huang"},
+      {"@type": "Person", "name": "Zhongyu Wei"}
+    ],
+    "datePublished": "2026",
+    "isAccessibleForFree": true,
+    "url": "https://chidaic.github.io/Legal-world/",
+    "image": "static/images/legalworld-overview.png"
+  }
+  </script>
+</head>
+
+<body>
+  <header class="hero project-hero">
+    <div class="hero-body">
+      <div class="container is-max-widescreen has-text-centered">
+        <p class="eyebrow">Life-cycle legal-agent simulation and benchmark</p>
+        <h1 class="title publication-title">
+          <span class="brand">LEGALWORLD</span>
+          <span class="subtitle-line">A Life-Cycle Interactive Environment for Legal Agents</span>
+        </h1>
+
+        <div class="publication-authors">
+          <span>Songhan Zuo<sup>1,2,*</sup></span>
+          <span>Shengbin Yue<sup>1,*</sup></span>
+          <span>Tao Chiang<sup>1</sup></span>
+          <span>Guanying Li<sup>1</sup></span>
+          <span>Yun Song<sup>3</sup></span>
+          <span>Xuanjing Huang<sup>1,2</sup></span>
+          <span>Zhongyu Wei<sup>1,2,#</sup></span>
+        </div>
+
+        <p class="affiliations">
+          <sup>1</sup>Fudan University &nbsp;&nbsp;
+          <sup>2</sup>Shanghai Innovation Institute &nbsp;&nbsp;
+          <sup>3</sup>Northwest University of Political and Law
+        </p>
+        <p class="author-note">* Equal contribution. # Corresponding author.</p>
+
+        <div class="project-buttons">
+          <a class="button project-button" href="static/paper/arxiv_version_Legal_world.pdf" target="_blank" rel="noopener">
+            <span>Paper PDF</span>
+          </a>
+          <a class="button project-button muted-button" href="#release">
+            <span>arXiv coming soon</span>
+          </a>
+          <a class="button project-button" href="https://github.com/chidaic/Legal-world" target="_blank" rel="noopener">
+            <span>Code</span>
+          </a>
+          <a class="button project-button muted-button" href="#release">
+            <span>Data coming soon</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section teaser-section">
+      <div class="container is-max-widescreen">
+        <figure class="paper-figure hero-figure">
+          <img src="static/images/legalworld-overview.png" alt="LEGALWORLD environment overview with agent roles, memory, tools, skills, and connected litigation stages">
+          <figcaption>
+            LEGALWORLD connects consultation, document drafting, first-instance trial, appeal determination,
+            appeal drafting, and second-instance trial through persistent memory and procedural Tool/Skill support.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="overview">
+      <div class="container is-max-desktop">
+        <h2 class="section-title">Overview</h2>
+        <p class="lead">
+          Civil litigation is not a collection of isolated tasks. Earlier consultation and drafting choices shape
+          what can be argued at trial, how evidence is used, and what happens on appeal. LEGALWORLD turns that
+          process into a connected interactive environment for legal agents, modeling Chinese civil litigation as
+          a causally linked state chain across five stages and seven sub-scenarios.
+        </p>
+        <p>
+          Built on 75,309 paired Chinese civil judgments, LEGALWORLD provides role-bound interfaces for clients,
+          lawyers, and judges, plus local memory, global case memory, and a modular Skill/Tool library. On top of
+          the environment, LongJud-Bench evaluates legal-agent capability across consultation, drafting, courtroom
+          advocacy, appeal, and second-instance proceedings.
+        </p>
+      </div>
+    </section>
+
+    <section class="section soft-section" id="data">
+      <div class="container is-max-widescreen">
+        <h2 class="section-title">Data Foundation</h2>
+        <div class="columns is-variable is-6 is-vcentered">
+          <div class="column is-5 narrative-copy">
+            <p>
+              LEGALWORLD is grounded in 75,309 paired first- and second-instance Chinese civil judgments.
+              The paired structure is important: it lets each runnable case preserve the relationship between
+              an initial dispute, its first-instance judgment, the appeal context, and the final appellate outcome.
+            </p>
+            <p>
+              The corpus covers more than 500 causes of action, ranging from high-frequency disputes such as
+              private lending and labor disputes to long-tail civil cases. This breadth is what makes it possible
+              to construct life-cycle trajectories rather than a small set of hand-written scenes.
+            </p>
+            <p class="metric-sentence">
+              In the current paper version: <strong>75,309</strong> paired cases support <strong>five</strong>
+              connected stages and <strong>seven</strong> sub-scenarios, with <strong>18,992</strong> human ratings
+              from <strong>217</strong> legal-background evaluators used for reliability validation.
+            </p>
+          </div>
+          <div class="column is-7">
+            <figure class="paper-figure">
+              <img src="static/images/longjud-dataset-composition.png" alt="Court-level and cause-of-action distribution for the 75,309 paired cases">
+              <figcaption>
+                Data foundation: paired appellate judgments provide both procedural continuity and broad cause-of-action coverage.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="life-cycle">
+      <div class="container is-max-widescreen">
+        <h2 class="section-title">Life-Cycle Environment</h2>
+        <div class="columns is-variable is-6 is-vcentered">
+          <div class="column is-5 narrative-copy">
+            <p>
+              LEGALWORLD unfolds a civil dispute from the first client consultation to the final second-instance
+              judgment. Each stage consumes the artifacts produced by the previous stage: facts disclosed during
+              consultation become complaint claims, drafted claims constrain courtroom advocacy, and trial outcomes
+              shape the appeal record.
+            </p>
+            <p>
+              This is why the environment uses both in-scenario local memory and global case memory. Local memory
+              keeps a single stage coherent, while global case memory carries facts, evidence, litigation goals,
+              and role-specific cognition across the full procedural chain. Clients, lawyers, and judges therefore
+              do not restart from a shared omniscient state; they operate under their own visibility, duties, and
+              procedural permissions.
+            </p>
+            <p>
+              The Tool/Skill layer gives agents procedural support for retrieval, document drafting, citation
+              checking, artifact reading, and memory writing. The goal is not only to make agents talk like legal
+              roles, but to make them act through the same kinds of artifacts and constraints that structure legal
+              practice.
+            </p>
+          </div>
+          <div class="column is-7">
+            <figure class="paper-figure">
+              <img src="static/images/legalworld-case-flow.png" alt="Example case flow from legal consultation to first-instance trial">
+              <figcaption>
+                Example trajectory: facts and evidence discovered in early consultation are carried into complaint drafting
+                and then used during first-instance trial.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft-section" id="experiments">
+      <div class="container is-max-widescreen">
+        <h2 class="section-title">Experiments</h2>
+        <div class="container-narrow narrative-copy">
+          <p>
+            The experiments first ask whether LEGALWORLD produces reliable legal trajectories, then use the validated
+            environment to evaluate model backbones through LongJud-Bench. The paper studies stage authenticity,
+            role consistency, judicial-output alignment, cross-stage dependence, cross-model capability profiles,
+            and a small trajectory-reflection probe.
+          </p>
+        </div>
+
+        <div class="experiment-block">
+          <div class="experiment-copy">
+            <h3>Environment reliability.</h3>
+            <p>
+              Across all five stages and three roles, 217 legal-background evaluators rate LEGALWORLD at 8.96/10
+              on stage authenticity and 8.98/10 on role consistency. The human study contributes 18,992 ratings,
+              and 64.4 percent of aligned human and LLM-as-Judge metric pairs fall within one point. The free-text
+              explanations also point to process coherence, procedural completeness, and role authenticity as the
+              dominant reasons for high scores.
+            </p>
+          </div>
+          <div class="figure-grid two-up">
+            <figure class="paper-figure">
+              <img src="static/images/human-llm-difference.png" alt="Human and LLM-as-Judge score difference distribution">
+              <figcaption>
+                Human and LLM-as-Judge validation: 64.4 percent of aligned pairs fall within +/-1 point.
+              </figcaption>
+            </figure>
+            <figure class="paper-figure">
+              <img src="static/images/human-rating-reasons.png" alt="Reason themes from human ratings">
+              <figcaption>
+                Human rating reasons emphasize process coherence, procedural completeness, and role authenticity.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="experiment-copy">
+            <h3>LongJud-Bench cross-model evaluation.</h3>
+            <p>
+              LongJud-Bench scores lawyer agents across the full litigation process through eight capabilities:
+              issue spotting, party identification, claim construction, fact marshalling, evidence marshalling,
+              position consistency, evidentiary advocacy, and legal reasoning. The capability profile reveals that
+              no backbone wins everywhere. Drafting strength, claim construction, and courtroom advocacy separate
+              in ways that aggregate scores would hide.
+            </p>
+            <p>
+              The paper finds courtroom advocacy to be the shared frontier. Compared with drafting, advocacy requires
+              the lawyer agent to integrate accumulated memory, opposing statements, judge prompts, and evidentiary
+              constraints in multi-turn interaction, which makes it the most discriminative target for future legal-agent
+              training.
+            </p>
+          </div>
+          <figure class="paper-figure compact-figure">
+            <img src="static/images/cross-model-capability-heatmap.png" alt="Cross-model capability heatmap on LongJud-Bench">
+            <figcaption>
+              Cross-model capability profile. Courtroom advocacy remains lighter than drafting across backbones.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="experiment-block">
+          <div class="experiment-copy">
+            <h3>Trajectory reflection as a training signal.</h3>
+            <p>
+              As an exploratory probe, the paper tests whether completed life-cycle trajectories can produce reusable
+              reflective Skill notes. On the three most frequent civil causes of action in the dataset, adding these
+              notes raises the average LongJud-Bench overall score from 61.56 to 65.29, a gain of 3.73 points. Gains
+              appear both on reflected cases and on held-out same-cause cases, suggesting that life-cycle interaction
+              traces can serve not only for evaluation, but also as procedurally grounded data for improving legal agents.
+            </p>
+          </div>
+          <figure class="paper-figure compact-figure">
+            <img src="static/images/rls-gain-plot.png" alt="Reflective Skill gains across high-frequency civil causes">
+            <figcaption>
+              Exploratory reflective Skill gains across high-frequency civil causes.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft-section" id="release">
+      <div class="container is-max-desktop">
+        <h2 class="section-title">Release Status</h2>
+        <p>
+          This project page is prepared before the arXiv release. The paper PDF and public backend code are
+          available for preview, while the arXiv page, data release, and BibTeX entry are intentionally left
+          pending until the public release is ready. Large data assets, including the law-retrieval vector index,
+          will be distributed through the data release rather than stored in the GitHub code repository.
+        </p>
+        <div class="release-list">
+          <span>Paper PDF ready</span>
+          <span>arXiv pending</span>
+          <span>Code ready</span>
+          <span>Data pending</span>
+          <span>Citation pending</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="citation">
+      <div class="container is-max-desktop">
+        <h2 class="section-title">Citation</h2>
+        <div class="citation-box">
+          BibTeX will be added after the arXiv version is public.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        Built with the
+        <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a>,
+        adapted from the
+        <a href="https://nerfies.github.io/" target="_blank" rel="noopener">Nerfies</a>
+        project page.
+      </p>
+      <p class="license-note">
+        Website template portions follow the original CC BY-SA 4.0 template license. Project content belongs to the LEGALWORLD authors.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="LEGALWORLD favicon">
+  <rect width="64" height="64" rx="12" fill="#f6f9f8"/>
+  <rect x="8" y="8" width="48" height="48" rx="8" fill="#315e4e"/>
+  <path d="M18 42V20h5v17h9v5H18zm17 0V20h5l6 12 6-12h5v22h-5V30l-4 8h-4l-4-8v12h-5z" fill="#ffffff"/>
+  <path d="M16 48h32" stroke="#b98d3d" stroke-width="3" stroke-linecap="round"/>
+</svg>

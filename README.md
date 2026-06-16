@@ -16,6 +16,7 @@ The public repository is intentionally backend-only. It does **not** include fro
 - `backend/legal-skillhub/public/`: public Skill instructions used by the legal-agent workflow.
 - `backend/gitskill/`: reflective Skill management and growth utilities.
 - `examples/status_client.py`: minimal example script for checking a running backend.
+- `docs/`: static LEGALWORLD project page for GitHub Pages.
 
 ## What Is Not Included
 
@@ -38,8 +39,8 @@ The public repository is intentionally backend-only. It does **not** include fro
 Clone the repository and create a Python environment:
 
 ```bash
-git clone https://github.com/<your-org>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/chidaic/Legal-world.git
+cd Legal-world
 python -m venv .venv
 ```
 
@@ -194,6 +195,25 @@ LAW_EMBEDDING_DIMENSIONS=1024
 ```
 
 `LAW_RETRIEVAL_INDEX_DIR` should point to the directory that contains the three files listed above. The query embedding model should match the model used to build the downloaded index; check the downloaded `law_vector_index_manifest.json` for the model hint.
+
+## Project Page
+
+The static project page is stored in `docs/` so GitHub Pages can serve it from the same repository.
+
+After pushing the repository, open GitHub repository settings and set:
+
+```text
+Settings -> Pages -> Build and deployment
+Source: Deploy from a branch
+Branch: main
+Folder: /docs
+```
+
+The expected page URL is:
+
+```text
+https://chidaic.github.io/Legal-world/
+```
 
 ## Repository Hygiene
 
