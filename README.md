@@ -1,0 +1,185 @@
+# LEGALWORLD Core Backend
+
+This repository contains the backend core for **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
+
+LEGALWORLD models civil litigation as a connected life-cycle process: consultation, document drafting, first-instance trial, appeal, and second-instance proceedings. The backend provides the agent runtime, scenario orchestration, legal Tool/Skill interfaces, WebSocket protocol, API routes, and extension points needed to run or extend the research system.
+
+The public repository is intentionally backend-only. It does **not** include frontend source code, runtime result data, raw evaluation outputs, paper drafts, private deployment files, or model/API credentials. A hosted demo page can be linked separately from the project page.
+
+## What Is Included
+
+- `backend/ws_server.py`: FastAPI and WebSocket application entry point.
+- `backend/src/agents/`: client, lawyer, judge, and receptionist agent wrappers.
+- `backend/src/scenarios/`: consultation, drafting, court, and appeal scenario logic.
+- `backend/src/pipeline/`: life-cycle pipeline and Tool/Skill stage resolution.
+- `backend/src/tools/`: legal drafting, retrieval, citation checking, memory, and artifact tools.
+- `backend/legal-skillhub/public/`: public Skill instructions used by the legal-agent workflow.
+- `backend/gitskill/`: reflective Skill management and growth utilities.
+- `examples/status_client.py`: minimal example script for checking a running backend.
+
+## What Is Not Included
+
+- No frontend application source.
+- No generated case trajectories, logs, batch runs, or benchmark results.
+- No raw legal judgment corpus or private evaluation materials.
+- No internal test files or private development checks.
+- No `.env`, API keys, database passwords, model credentials, or deployment secrets.
+
+## Requirements
+
+- Python 3.10 or 3.11.
+- PostgreSQL 16 for the full API/runtime service.
+- Docker and Docker Compose are recommended for the database-backed backend.
+- Model provider credentials for model-backed simulations.
+
+## Quick Start
+
+Clone the repository and create a Python environment:
+
+```bash
+git clone https://github.com/<your-org>/<your-repo>.git
+cd <your-repo>
+python -m venv .venv
+```
+
+Activate the environment:
+
+```bash
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Create local configuration:
+
+```bash
+# Windows PowerShell
+Copy-Item .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+Edit `.env` and set at least:
+
+```env
+OPENAI_API_KEY=
+OPENAI_API_BASE_URL=
+OPENAI_MODEL_NAME=
+DATABASE_URL=postgresql+psycopg://simlaw:change-this-postgres-password@localhost:5432/simlaw
+JWT_SECRET=change-this-jwt-secret
+```
+
+Use your own model provider endpoint and credentials. Do not commit `.env`.
+
+## Run With Docker Compose
+
+The easiest full local setup is Docker Compose, which starts PostgreSQL and the backend service together:
+
+```bash
+docker compose -f backend/docker-compose.yml up --build
+```
+
+After startup, check:
+
+```text
+http://127.0.0.1:8000/api/status
+```
+
+Stop the stack:
+
+```bash
+docker compose -f backend/docker-compose.yml down
+```
+
+## Run Backend Directly
+
+If PostgreSQL is already available and `DATABASE_URL` points to it, run:
+
+```bash
+python start.py
+```
+
+This starts only the backend:
+
+```text
+Backend API: http://127.0.0.1:8000
+WebSocket:   ws://127.0.0.1:8000/ws
+```
+
+You can also run Uvicorn directly:
+
+```bash
+cd backend
+python -m uvicorn ws_server:app --host 127.0.0.1 --port 8000
+```
+
+## Run The Example Script
+
+Once the backend is running, use the example client to verify the service:
+
+```bash
+python examples/status_client.py --base-url http://127.0.0.1:8000
+```
+
+Expected output is a JSON object similar to:
+
+```json
+{
+  "status": "running",
+  "backend_version": "..."
+}
+```
+
+This example does not run a case and does not call a model provider. It only checks that the backend API is reachable.
+
+## Skill Library
+
+The public legal Skill library is included under:
+
+```text
+backend/legal-skillhub/public/
+```
+
+The runtime uses this folder by default. To override it, set:
+
+```env
+SIMLAW_MAIN_SKILL_ROOT=/path/to/your/skillhub/public
+```
+
+Reflective Skill growth utilities are included under `backend/gitskill/`. They operate on generated case-run outputs, which are not part of this public repository. To run the single-case reflection example, first point it at your own generated case directory:
+
+```bash
+SIMLAW_SKILL_GROWTH_CASE_DIR=backend/batch_runs/<your_case_run> python backend/gitskill/run_single_case_skill_growth.py
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:SIMLAW_SKILL_GROWTH_CASE_DIR="backend/batch_runs/<your_case_run>"
+python backend/gitskill/run_single_case_skill_growth.py
+```
+
+## Repository Hygiene
+
+Before publishing or making a release:
+
+- Confirm `.env` is not tracked.
+- Confirm no generated data exists under `backend/sandbox_data/`, `backend/batch_runs/`, or debug output folders.
+- Confirm no frontend source directory is present.
+- Confirm public Skills under `backend/legal-skillhub/public/` contain only reusable procedural guidance.
+- Confirm no private IPs, API keys, access tokens, or local absolute paths are present.
+- Add a project license before public release.
+
+## Citation
+
+Citation information will be added after the arXiv release.

@@ -1,0 +1,71 @@
+﻿version: 1
+tool_registry_refs:
+  - search_laws
+  - save_client_memory
+  - save_lawyer_memory
+  - draft_complaint_document
+  - draft_defense_document
+  - draft_appeal_document
+  - draft_appeal_response_document
+  - draft_first_instance_judgment_document
+  - draft_second_instance_judgment_document
+agent_type_defaults:
+  lawyer:
+    - search_laws
+    - save_lawyer_memory
+  client:
+    - save_client_memory
+  judge:
+    - search_laws
+  receptionist: []
+stages:
+  LC:
+    shared_tools: []
+    role_tools:
+      client: []
+      lawyer: []
+  CD:
+    shared_tools: []
+    role_tools:
+      plaintiff: []
+      lawyer:
+        - draft_complaint_document
+  DD:
+    shared_tools: []
+    role_tools:
+      defendant: []
+      lawyer:
+        - draft_defense_document
+  CI:
+    shared_tools: []
+    role_tools:
+      judge:
+        - draft_first_instance_judgment_document
+      plaintiff: []
+      defendant: []
+      plaintiff_lawyer: []
+      defendant_lawyer: []
+  SD:
+    shared_tools: []
+    role_tools: {}
+  AD:
+    shared_tools: []
+    role_tools:
+      appellant: []
+      lawyer:
+        - draft_appeal_document
+  AR:
+    shared_tools: []
+    role_tools:
+      appellee: []
+      lawyer:
+        - draft_appeal_response_document
+  CIA:
+    shared_tools: []
+    role_tools:
+      judge:
+        - draft_second_instance_judgment_document
+      appellant: []
+      appellee: []
+      appellant_lawyer: []
+      appellee_lawyer: []

@@ -1,0 +1,77 @@
+# Dependencies and virtual environments
+.venv/
+venv/
+backend/.venv/
+
+# Frontend source is intentionally excluded from the public core backend repo.
+frontend/
+frontend-v2/
+node_modules/
+
+# Build outputs and generated batch results
+backend/batch_runs/
+backend/sandbox_data/
+backend/single_case_debug_runs/
+backend/debug_runs/
+backend/shared/
+backend/gitskill_data/
+skill_test/workspace/
+
+# Experiment run outputs
+backend/experiment/**/runs/
+backend/experiment/**/runs*/
+backend/experiment/**/run_outputs/
+backend/experiment/**/outputs/
+backend/experiment/**/results/
+backend/legal_corpus/experiment/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Packaging artifacts
+*.egg
+*.egg-info/
+.eggs/
+.Python
+build/
+dist/
+
+# Environment and local config
+.env
+.env.local
+.env.*.local
+.claude/settings.local.json
+backend/batch_tools/deepseek_lawyer_private_config.json
+
+# IDE and OS files
+.vscode/
+.idea/
+.kiro/
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+tmp-*
+tmp_*
+temp_*.py
+.codex-artifacts/
+.superpowers/
+
+# Optional local tools or benchmarks
+.agent/
+J1Bench/
+video-remotion/
+SimLegal_paper/
+backend/batch_runs
+backend_image_v3_amd64.tar.gz
