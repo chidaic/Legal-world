@@ -285,6 +285,15 @@ a {
   padding: 1.1rem;
 }
 
+.citation-box pre {
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
 .footer {
   background: #ffffff;
   border-top: 1px solid var(--line);

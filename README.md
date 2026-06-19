@@ -4,6 +4,10 @@ This repository contains the backend core for **LEGALWORLD: A Life-Cycle Interac
 
 Project page: [https://chidaic.github.io/Legal-world/](https://chidaic.github.io/Legal-world/)
 
+Paper: [https://arxiv.org/abs/2606.18728](https://arxiv.org/abs/2606.18728)
+
+Demo: [http://www.fudan-disc.com/legalworld/](http://www.fudan-disc.com/legalworld/)
+
 LEGALWORLD models civil litigation as a connected life-cycle process: consultation, document drafting, first-instance trial, appeal, and second-instance proceedings. The backend provides the agent runtime, scenario orchestration, legal Tool/Skill interfaces, WebSocket protocol, API routes, and extension points needed to run or extend the research system.
 
 The public repository is intentionally backend-only. It does **not** include frontend source code, runtime result data, raw evaluation outputs, paper drafts, private deployment files, or model/API credentials. A hosted demo page can be linked separately from the project page.
@@ -231,4 +235,14 @@ Before publishing or making a release:
 
 ## Citation
 
-Citation information will be added after the arXiv release.
+```bibtex
+@misc{zuo2026legalworld,
+  title={LegalWorld: A Life-Cycle Interactive Environment for Legal Agents},
+  author={Songhan Zuo and Shengbin Yue and Tao Chiang and Guanying Li and Yun Song and Xuanjing Huang and Zhongyu Wei},
+  year={2026},
+  eprint={2606.18728},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2606.18728}
+}
+```
