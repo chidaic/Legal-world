@@ -1,6 +1,6 @@
-# LEGALWORLD Core Backend
+# LEGALWORLD 
 
-This repository contains the backend core for **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
+ **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
 
 Project page: [https://chidaic.github.io/Legal-world/](https://chidaic.github.io/Legal-world/)
 
