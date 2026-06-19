@@ -3,7 +3,7 @@
 venv/
 backend/.venv/
 
-# Frontend source is intentionally excluded from the public core backend repo.
+# Frontend source is not part of this public code release.
 frontend/
 frontend-v2/
 node_modules/
@@ -17,6 +17,11 @@ backend/debug_runs/
 backend/shared/
 backend/gitskill_data/
 skill_test/workspace/
+dataset_builder/outputs/
+dataset_builder/**/stage1_extracted.json
+dataset_builder/**/stage2_persona.json
+dataset_builder/**/light_case_dataset.json
+dataset_builder/**/run_summary.txt
 
 # Large optional law-retrieval indexes are released outside GitHub.
 law_vector_index_manifest.json

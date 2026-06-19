@@ -1,6 +1,6 @@
-# LEGALWORLD Core Backend
+# LEGALWORLD
 
-This repository contains the backend core for **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
+This repository contains the public open-source code release for **LEGALWORLD: A Life-Cycle Interactive Environment for Legal Agents**.
 
 Project page: [https://chidaic.github.io/Legal-world/](https://chidaic.github.io/Legal-world/)
 
@@ -8,9 +8,11 @@ Paper: [https://arxiv.org/abs/2606.18728](https://arxiv.org/abs/2606.18728)
 
 Demo: [http://www.fudan-disc.com/legalworld/](http://www.fudan-disc.com/legalworld/)
 
-LEGALWORLD models civil litigation as a connected life-cycle process: consultation, document drafting, first-instance trial, appeal, and second-instance proceedings. The backend provides the agent runtime, scenario orchestration, legal Tool/Skill interfaces, WebSocket protocol, API routes, and extension points needed to run or extend the research system.
+Dataset: [https://huggingface.co/datasets/Chidaic/legal-world](https://huggingface.co/datasets/Chidaic/legal-world)
 
-The public repository is intentionally backend-only. It does **not** include frontend source code, runtime result data, raw evaluation outputs, paper drafts, private deployment files, or model/API credentials. A hosted demo page can be linked separately from the project page.
+LEGALWORLD models civil litigation as a connected life-cycle process: consultation, document drafting, first-instance trial, appeal, and second-instance proceedings. The released code provides the agent runtime, scenario orchestration, legal Tool/Skill interfaces, WebSocket protocol, API routes, dataset-construction utilities, and extension points needed to run or extend the research system.
+
+This public release focuses on reproducible code and reusable components. It does **not** include runtime result data, raw evaluation outputs, paper drafts, private deployment files, or model/API credentials. The hosted demo and dataset are linked above.
 
 ## What Is Included
 
@@ -21,12 +23,12 @@ The public repository is intentionally backend-only. It does **not** include fro
 - `backend/src/tools/`: legal drafting, retrieval, citation checking, memory, and artifact tools.
 - `backend/legal-skillhub/public/`: public Skill instructions used by the legal-agent workflow.
 - `backend/gitskill/`: reflective Skill management and growth utilities.
-- `examples/status_client.py`: minimal example script for checking a running backend.
+- `dataset_builder/`: code for constructing the public case dataset from matched first- and second-instance raw cases.
+- `examples/status_client.py`: minimal example script for checking a running service.
 - `docs/`: static LEGALWORLD project page for GitHub Pages.
 
 ## What Is Not Included
 
-- No frontend application source.
 - No generated case trajectories, logs, run outputs, batch scripts, or benchmark results.
 - No raw legal judgment corpus or private evaluation materials.
 - No law-retrieval vector index files; these are large data assets released separately.
@@ -37,7 +39,7 @@ The public repository is intentionally backend-only. It does **not** include fro
 
 - Python 3.10 or 3.11.
 - PostgreSQL 16 for the full API/runtime service.
-- Docker and Docker Compose are recommended for the database-backed backend.
+- Docker and Docker Compose are recommended for the database-backed local service.
 - Model provider credentials for model-backed simulations.
 
 ## Quick Start
@@ -93,7 +95,7 @@ Use your own model provider endpoint and credentials. Do not commit `.env`.
 
 ## Run With Docker Compose
 
-The easiest full local setup is Docker Compose, which starts PostgreSQL and the backend service together:
+The easiest full local setup is Docker Compose, which starts PostgreSQL and the LEGALWORLD service together:
 
 ```bash
 docker compose -f backend/docker-compose.yml up --build
@@ -111,7 +113,7 @@ Stop the stack:
 docker compose -f backend/docker-compose.yml down
 ```
 
-## Run Backend Directly
+## Run Service Directly
 
 If PostgreSQL is already available and `DATABASE_URL` points to it, run:
 
@@ -119,11 +121,11 @@ If PostgreSQL is already available and `DATABASE_URL` points to it, run:
 python start.py
 ```
 
-This starts only the backend:
+This starts the local API and WebSocket service:
 
 ```text
-Backend API: http://127.0.0.1:8000
-WebSocket:   ws://127.0.0.1:8000/ws
+API:       http://127.0.0.1:8000
+WebSocket: ws://127.0.0.1:8000/ws
 ```
 
 You can also run Uvicorn directly:
@@ -135,7 +137,7 @@ python -m uvicorn ws_server:app --host 127.0.0.1 --port 8000
 
 ## Run The Example Script
 
-Once the backend is running, use the example client to verify the service:
+Once the service is running, use the example client to verify it:
 
 ```bash
 python examples/status_client.py --base-url http://127.0.0.1:8000
@@ -179,9 +181,42 @@ $env:SIMLAW_SKILL_GROWTH_CASE_DIR="backend/case_runs/<your_case_run>"
 python backend/gitskill/run_single_case_skill_growth.py
 ```
 
-## Optional Law Retrieval Data
+## Dataset Construction Utilities
 
-Semantic law-article retrieval is disabled by default in this public repository. The retrieval tool requires a prebuilt local vector index, including:
+The `dataset_builder/` folder contains the open-source case dataset construction pipeline. It converts matched first- and second-instance raw JSON cases into structured case data, adds legal persona profiles, and generates consultation questions with reference answers.
+
+Install the lightweight builder dependencies:
+
+```bash
+pip install -r dataset_builder/requirements.txt
+```
+
+Configure an OpenAI-compatible model endpoint:
+
+```bash
+export OPENAI_API_KEY="your_api_key"
+export OPENAI_BASE_URL="your_api_base_url"
+export OPENAI_MODEL="your_model_name"
+```
+
+Run the builder from the `dataset_builder/` folder:
+
+```bash
+cd dataset_builder
+python -m case_dataset_builder.pipeline <input_raw_json> --output-dir <output_dir>
+```
+
+The public Hugging Face dataset already provides released case resources. This builder is included for reproducibility and customization; generated outputs should stay outside the GitHub repository.
+
+## Dataset And Optional Law Retrieval Data
+
+The public dataset is hosted on Hugging Face:
+
+```text
+https://huggingface.co/datasets/Chidaic/legal-world
+```
+
+It includes raw and processed case data plus `law_metadata.jsonl` for legal-provision retrieval. Semantic law-article retrieval is disabled by default in this code release. To enable retrieval, download the law metadata, generate embeddings locally or attach your own vector database, and prepare a local index directory containing:
 
 ```text
 law_vector_index_manifest.json
@@ -189,18 +224,18 @@ law_embeddings.float16.npy
 law_metadata.jsonl
 ```
 
-These files are intentionally not stored in GitHub because they are large data assets. After the project Data page is public, download the law-retrieval index package from the Data page or the linked Hugging Face dataset, unpack it locally, and then enable retrieval:
+These files are intentionally not stored in GitHub because they are large data assets. After preparing the local index, enable retrieval:
 
 ```env
 SIMLAW_ENABLE_LAW_RETRIEVAL=true
-LAW_RETRIEVAL_INDEX_DIR=/path/to/cn_law
+LAW_RETRIEVAL_INDEX_DIR=/path/to/your/cn_law_index
 LAW_EMBEDDING_API_KEY=
 LAW_EMBEDDING_API_BASE_URL=
 LAW_EMBEDDING_MODEL=
 LAW_EMBEDDING_DIMENSIONS=1024
 ```
 
-`LAW_RETRIEVAL_INDEX_DIR` should point to the directory that contains the three files listed above. The query embedding model should match the model used to build the downloaded index; check the downloaded `law_vector_index_manifest.json` for the model hint.
+`LAW_RETRIEVAL_INDEX_DIR` should point to the directory that contains the three files listed above. The query embedding model should match the model used to build the local index; keep the model hint in `law_vector_index_manifest.json`.
 
 ## Project Page
 
@@ -228,7 +263,6 @@ Before publishing or making a release:
 - Confirm `.env` is not tracked.
 - Confirm no generated data exists under `backend/sandbox_data/`, `backend/case_runs/`, `backend/batch_runs/`, or debug output folders.
 - Confirm law-retrieval index files are not committed; publish them through the project Data page instead.
-- Confirm no frontend source directory is present.
 - Confirm public Skills under `backend/legal-skillhub/public/` contain only reusable procedural guidance.
 - Confirm no private IPs, API keys, access tokens, or local absolute paths are present.
 - Add a project license before public release.
